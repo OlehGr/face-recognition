@@ -6,8 +6,15 @@ import aiofiles as aiofiles
 import face_recognition
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+<<<<<<< HEAD
 
 app = FastAPI()
+=======
+from fastapi import exceptions
+
+app = FastAPI()
+
+>>>>>>> 0ba13416466b03dca5a24c36028410bad85d6974
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -27,8 +34,9 @@ async def train_model_by_img(user):
 
     for image in images:
         face_img = face_recognition.load_image_file(f"db/photos/{user}/{image}")
-        face_enc = face_recognition.face_encodings(face_img)[0]
-
+        face_enc = face_recognition.face_encodings(face_img)
+        if len(face_enc) > 0:
+            face_enc = face_enc[0]
         if len(known_encodings) == 0:
             known_encodings.append(face_enc)
         else:
@@ -54,7 +62,7 @@ async def post_endpoint(files: List[UploadFile], user: str = None):
     try:
         os.mkdir(f'db/photos/{user}')
     except:
-        return {"message": "Данный пользователь сущесвует"}
+        return exceptions.ValidationError('Invalid user')
     for file in files:
         async with aiofiles.open(f"db/photos/{user}/{file.filename}", 'wb') as out_file:
             content = await file.read()
