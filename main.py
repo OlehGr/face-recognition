@@ -92,17 +92,17 @@ def compare_user_with_encodings(screenshot, screenshot_encodings, screenshot_loc
             cv2.rectangle(screenshot, left_top, right_bottom, color, 4)
 
             left_bottom = (face_location[3], face_location[2])
-            right_bottom = (face_location[1], face_location[2] + 20)
+            right_bottom = (face_location[1], face_location[2])
             cv2.rectangle(screenshot, left_bottom, right_bottom, color, cv2.FILLED)
-            cv2.putText(
-                screenshot,
-                founded_user,
-                (face_location[3] + 10, face_location[2] + 15),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                1,
-                (255, 255, 255),
-                4
-            )
+            # cv2.putText(
+            #     screenshot,
+            #     founded_user,
+            #     (face_location[3] + 10, face_location[2] + 15),
+            #     cv2.FONT_HERSHEY_COMPLEX,
+            #     1,
+            #     (255, 255, 255),
+            #     4
+            # )
 
 
 def watch_video_for_users():

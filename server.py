@@ -5,9 +5,19 @@ from typing import List
 import aiofiles as aiofiles
 import face_recognition
 from fastapi import FastAPI, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import exceptions
 
 app = FastAPI()
 
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def train_model_by_img(user):
     if not os.path.exists(f"db/photos/{user}"):
@@ -19,8 +29,9 @@ async def train_model_by_img(user):
 
     for image in images:
         face_img = face_recognition.load_image_file(f"db/photos/{user}/{image}")
-        face_enc = face_recognition.face_encodings(face_img)[0]
-
+        face_enc = face_recognition.face_encodings(face_img)
+        if len(face_enc) > 0:
+            face_enc = face_enc[0]
         if len(known_encodings) == 0:
             known_encodings.append(face_enc)
         else:
@@ -46,7 +57,7 @@ async def post_endpoint(files: List[UploadFile], user: str = None):
     try:
         os.mkdir(f'db/photos/{user}')
     except:
-        return {"message": "Данный пользователь сущесвует"}
+        return exceptions.ValidationError('Invalid user')
     for file in files:
         async with aiofiles.open(f"db/photos/{user}/{file.filename}", 'wb') as out_file:
             content = await file.read()
