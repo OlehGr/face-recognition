@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+}
+
+input {
+    outline: none;
+    border: none;
+}
+
+button {
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.main {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    background-size: cover;
+    background-position: center;
+    background-image: url("/background.jpg");
+
+    position: relative;
+}
+
+.main::before {
+    content: '';
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, .3);
+    z-index: 1;
+}
+
+.main > * {
+    position: relative;
+    z-index: 2;
+}
+
+.container {
+    width: 80%;
+    max-width: 1161px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.reg-form {
+    flex-direction: column;
+    justify-content: flex-start;
+
+    grid-gap: 15px;
+}
+
+.field {
+    position: relative;
+
+    width: 100%;
+}
+
+.input {
+    width: 100%;
+    padding-left: 20px;
+
+    height: 50px;
+    border-radius: 12px;
+
+    background-color: rgba(255, 255, 255, .4);
+    box-shadow: 0px 0px 14px 8px rgba(6, 142, 246, 0.2);
+
+    font-size: 22px;
+    line-height: 22pc;
+
+    color: #fff;
+}
+
+.input::placeholder {
+    color: #ffffff50;
+}
+
+.next {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+
+    height: 21px;
+
+}
+
+.next svg {
+    width: 39px;
+    height: 21px;
+
+    filter: drop-shadow(0 0 5px #fff);
+}
+
+.uploads {
+    
+    width: 100%;
+
+    grid-gap: 10px;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.uploads__item {
+    height: 100px;
+    width: 150px;
+    background-color: #fff;
+
+    border-radius: 12px;
+}
+
+.video {
+    height: 100px;
+    width: 100%;
+
+    object-fit: cover;
+    height: 50vh;
+    width: auto;
+
+    border-radius: 20px;
+
+
+    box-shadow: 0px 0px 14px 8px rgba(255, 255, 255, 0.2);
+}
+
+.hide {
+    display: none;
+}
