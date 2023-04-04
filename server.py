@@ -5,9 +5,17 @@ from typing import List
 import aiofiles as aiofiles
 import face_recognition
 from fastapi import FastAPI, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def train_model_by_img(user):
     if not os.path.exists(f"db/photos/{user}"):

@@ -1,0 +1,18 @@
+version: '3'
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+  api:
+    build: .
+    ports:
+      - "8002:8002"
+    volumes:
+      - /db:/app/db/models
+      - /db:/app/db/photos
+      - data_db_model:/app/db/models
+volumes:
+  data_db_model:
