@@ -3,9 +3,12 @@ import os
 import face_recognition
 from PIL import Image, ImageDraw
 import pickle
-from cv2 import cv2
-
+import cv2
+from transliterate import translit
 from webcam import WebcamStream
+
+cv2.namedWindow("main", cv2.WINDOW_AUTOSIZE)
+
 
 
 def face_rec():
@@ -73,42 +76,54 @@ def compare_faces(img1_path, img2_path):
 
 
 def compare_user_with_encodings(screenshot, screenshot_encodings, screenshot_locations, users_models):
+    founded_users = []
     for face_encoding, face_location in zip(screenshot_encodings, screenshot_locations):
-
-        founded_users = []
-
+        founded_face_encoding = None
         for user_model in users_models:
+            if founded_face_encoding:
+                break
             user_encodings = user_model['encodings']
-            result = face_recognition.compare_faces(user_encodings, face_encoding, tolerance=0.6)
+            result = face_recognition.compare_faces(user_encodings, face_encoding)
             print(result)
-            if result.count(True) >= (len(user_encodings) / 2):
-                founded_users.append(user_model["user"])
+            if True in result:
+                founded_users.append({"name": user_model["user"], "face_location": face_location})
+                founded_face_encoding = user_model["user"]
 
-        if len(founded_users) > 0:
-            print(f'Нашли {founded_users}')
+        if not founded_face_encoding:
+            founded_users.append({"name": 'Anonymous', "face_location": face_location})
+
+
+    if len(founded_users) > 0:
+        print(f'Нашли {founded_users}')
+
+        for user_data in founded_users:
+            face_location = user_data['face_location']
+            founded_user = user_data['name']
             left_top = (face_location[3], face_location[0])
             right_bottom = (face_location[1], face_location[2])
-            color = [0, 255, 0]
+            color = [255, 255, 255]
             cv2.rectangle(screenshot, left_top, right_bottom, color, 4)
 
             left_bottom = (face_location[3], face_location[2])
             right_bottom = (face_location[1], face_location[2])
             cv2.rectangle(screenshot, left_bottom, right_bottom, color, cv2.FILLED)
-            # cv2.putText(
-            #     screenshot,
-            #     founded_user,
-            #     (face_location[3] + 10, face_location[2] + 15),
-            #     cv2.FONT_HERSHEY_COMPLEX,
-            #     1,
-            #     (255, 255, 255),
-            #     4
-            # )
+            cv2.putText(
+                screenshot,
+                translit(founded_user.replace('_', ' '), 'ru', True),
+                (face_location[3] - 20, face_location[2] + 20),
+                cv2.FONT_ITALIC,
+                .6,
+                (0, 255, 0),
+                2
+            )
+
 
 
 def watch_video_for_users():
     users_models=[]
     if len(os.listdir(f"db/models")) > 0:
         users_models = [pickle.loads(open(f"db/models/{model_file}", "rb").read()) for model_file in os.listdir(f"db/models")]
+
 
     webcam_stream = WebcamStream(stream_id=0)
     webcam_stream.start()
@@ -131,8 +146,8 @@ def watch_video_for_users():
                                         users_models=users_models
                                         )
         num_frames_processed += 1
-
-        cv2.imshow('dd', screenshot)
+        res = cv2.resize(screenshot, dsize=(1920, 1000))
+        cv2.imshow('main', res)
         k = cv2.waitKey(1)
         if k == ord("q"):
             print("Q pressed, closing the app")

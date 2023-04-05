@@ -1,0 +1,14 @@
+version: '3'
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+  api:
+    build: ../../banch/face-recognition
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./db/model:/app/db/models

@@ -21,7 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount('/static', StaticFiles(directory='static', html=True), name='static')
 
 async def train_model_by_img(user):
     if not os.path.exists(f"db/photos/{user}"):
@@ -60,7 +59,7 @@ async def train_model_by_img(user):
         file.write(pickle.dumps(data))
 
 
-@app.post("/reg")
+@app.post("/")
 async def post_endpoint(files: List[UploadFile], user: str = None):
     try:
         os.mkdir(f'db/photos/{user}')
@@ -75,7 +74,3 @@ async def post_endpoint(files: List[UploadFile], user: str = None):
 
     return {"message": "OK"}
 
-
-@app.get("/")
-async def index():
-    return FileResponse('./static/reg_page/index.html', media_type='text/html')
