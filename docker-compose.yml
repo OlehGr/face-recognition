@@ -7,8 +7,8 @@ services:
       - "80:80"
       - "443:443"
   api:
-    build: ../../banch/face-recognition
+    build: .
     ports:
       - "8002:8002"
     volumes:
-      - ./db/model:/app/db/models
+      - ./db/models:/app/db/models
