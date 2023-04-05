@@ -1,0 +1,14 @@
+version: '3'
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+  api:
+    image: hub.54fz.club/library/face-recognition-api:latest
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./db/models:/app/db/models

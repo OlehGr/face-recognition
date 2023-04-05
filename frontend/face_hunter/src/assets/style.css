@@ -513,3 +513,9 @@ button {
     fill: #fff;
 }
       
+
+@media (min-width: 700px) {
+    .next-btn {
+        max-width: 400px;
+    }
+}

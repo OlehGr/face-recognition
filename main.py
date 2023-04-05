@@ -109,7 +109,8 @@ def compare_user_with_encodings(screenshot, screenshot_encodings, screenshot_loc
             cv2.rectangle(screenshot, left_bottom, right_bottom, color, cv2.FILLED)
             cv2.putText(
                 screenshot,
-                translit(founded_user.replace('_', ' '), 'ru', True),
+                # translit(founded_user.replace('_', ' '), 'ru', True),
+                founded_user,
                 (face_location[3] - 20, face_location[2] + 20),
                 cv2.FONT_ITALIC,
                 .6,
