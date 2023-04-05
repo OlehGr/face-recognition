@@ -75,17 +75,17 @@ def compare_faces(img1_path, img2_path):
 def compare_user_with_encodings(screenshot, screenshot_encodings, screenshot_locations, users_models):
     for face_encoding, face_location in zip(screenshot_encodings, screenshot_locations):
 
-        founded_user = None
+        founded_users = []
 
         for user_model in users_models:
             user_encodings = user_model['encodings']
-            result = face_recognition.compare_faces(user_encodings, face_encoding)
+            result = face_recognition.compare_faces(user_encodings, face_encoding, tolerance=0.6)
+            print(result)
+            if result.count(True) >= (len(user_encodings) / 2):
+                founded_users.append(user_model["user"])
 
-            if result.count(True) > 3:
-                founded_user = user_model["user"]
-
-        if founded_user:
-            print(f'Нашли {founded_user}')
+        if len(founded_users) > 0:
+            print(f'Нашли {founded_users}')
             left_top = (face_location[3], face_location[0])
             right_bottom = (face_location[1], face_location[2])
             color = [0, 255, 0]

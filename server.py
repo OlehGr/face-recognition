@@ -6,7 +6,9 @@ import aiofiles as aiofiles
 import face_recognition
 from fastapi import FastAPI, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi import exceptions
+from  fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -19,6 +21,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount('/static', StaticFiles(directory='static', html=True), name='static')
+
 async def train_model_by_img(user):
     if not os.path.exists(f"db/photos/{user}"):
         print("[ERROR] there is no directory 'dataset'")
@@ -29,14 +33,18 @@ async def train_model_by_img(user):
 
     for image in images:
         face_img = face_recognition.load_image_file(f"db/photos/{user}/{image}")
-        face_enc = face_recognition.face_encodings(face_img)
-        if len(face_enc) > 0:
-            face_enc = face_enc[0]
+        founded_faces = face_recognition.face_encodings(face_img)
+        if len(founded_faces) == 0:
+            continue
+        face_enc = founded_faces[0]
+
+
+
         if len(known_encodings) == 0:
             known_encodings.append(face_enc)
         else:
-            for item in range(0, len(known_encodings)):
-                result = face_recognition.compare_faces([face_enc], known_encodings[item])
+            for item in known_encodings:
+                result = face_recognition.compare_faces([face_enc], item)
                 if result[0]:
                     known_encodings.append(face_enc)
                     break
@@ -52,7 +60,7 @@ async def train_model_by_img(user):
         file.write(pickle.dumps(data))
 
 
-@app.post("/")
+@app.post("/reg")
 async def post_endpoint(files: List[UploadFile], user: str = None):
     try:
         os.mkdir(f'db/photos/{user}')
@@ -63,8 +71,11 @@ async def post_endpoint(files: List[UploadFile], user: str = None):
             content = await file.read()
             await out_file.write(content)
 
-
-
     await train_model_by_img(user)
 
     return {"message": "OK"}
+
+
+@app.get("/")
+async def index():
+    return FileResponse('./static/reg_page/index.html', media_type='text/html')

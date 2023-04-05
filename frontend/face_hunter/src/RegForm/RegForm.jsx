@@ -60,7 +60,7 @@ const RegForm = () => {
             const data = new FormData()
             uploads.forEach((upload, i) => data.append('files', new File([upload[1]], `image_${i}.jpeg`, {type: upload[1].type})))
 
-            return await fetch(`http://127.0.0.1:8000/?user=${name}`, {
+            return await fetch(`reg/?user=${name}`, {
                 method: 'POST',
                 body: data
             })
